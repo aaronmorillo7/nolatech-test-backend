@@ -2,19 +2,16 @@ const routes = require('express').Router();
 const bodyParser = require('body-parser');
 
 const authRoutes = require("./auth")
+const employeeRoutes = require("./employee")
 
-routes.use(bodyParser.urlencoded({ extended: true }));
+const { validateAuth } = require("../validations/auth")
+
 routes.use(bodyParser.json());
 
-routes.use((req, res, next) => {
-  console.log(`Resource requested: ${req.method} ${req.originalUrl}`);
-  next();
-});
-
-routes.get('/', (req, res) => {
-  res.status(200).json({ success: true, message: 'Hello world!' });
-});
-
 routes.use("/auth", authRoutes)
+
+routes.use(validateAuth);
+
+routes.use("/employees", employeeRoutes)
 
 module.exports = routes;
