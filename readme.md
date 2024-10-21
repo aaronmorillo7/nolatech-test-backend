@@ -2,15 +2,15 @@
 
 Correr los comandos
 
-npm install
+- npm install
 
-node index.js
+- node index.js
 
 ## Variables
 
-DB_URL: Es el url del base de datos
-DB_NAME: Es el nombre de la base de datos
-PORT: Es el puerto al que será expuesto la aplicación
+- DB_URL: Es el url del base de datos
+- DB_NAME: Es el nombre de la base de datos
+- PORT: Es el puerto al que será expuesto la aplicación
 
 ## Estructura
 
