@@ -7,9 +7,9 @@ const EvaluationSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "Employee",
     },
-    feedback: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Feedback",
+    name: {
+        type: String,
+        required: true,
     },
     questions: [QuestionSchema],
 }, 

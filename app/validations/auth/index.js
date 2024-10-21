@@ -1,8 +1,8 @@
 const Joi = require("joi");
-const jwt = require('jsonwebtoken');
+const jwt = require("jsonwebtoken");
 const secret = require("../../config/secret");
 
-const { UserModel } = require("../../models/User")
+const { UserModel } = require("../../models/User");
 
 const validateRegister = (request, response, next) => {
   const schema = Joi.object().keys({
@@ -25,7 +25,7 @@ const validateRegister = (request, response, next) => {
 
   if (error)
     return response.status(400).json({
-      status: 400,
+      success: false,
       message: "Datos incorrectos.",
       error: error,
     });
@@ -45,7 +45,25 @@ const validateLogin = async (request, response, next) => {
 
   if (error)
     return response.status(400).json({
-      status: 400,
+      success: false,
+      message: "Datos incorrectos.",
+      error: error,
+    });
+  else next();
+};
+
+const validateCheckToken = async (request, response, next) => {
+  const schema = Joi.object().keys({
+    access_token: Joi.string().required(),
+  });
+
+  const { error, value } = schema.validate({
+    access_token: request.body.access_token,
+  });
+
+  if (error)
+    return response.status(400).json({
+      success: false,
       message: "Datos incorrectos.",
       error: error,
     });
@@ -58,34 +76,44 @@ const validateAuth = async (request, response, next) => {
   });
 
   const { error, value } = schema.validate({
-    access_token: request.headers.authorization?.split(' ')[1],
+    access_token: request.headers.authorization?.split(" ")[1],
   });
 
-  if (error) return response.status(401).json({
-    success: false,
-    error: error.details,
-  })
+  if (error)
+    return response.status(401).json({
+      success: false,
+      error: error.details,
+    });
 
   try {
-    decoded = jwt.verify(request.headers.authorization?.split(' ')[1], secret)
+    decoded = jwt.verify(request.headers.authorization?.split(" ")[1], secret);
   } catch (verificationError) {
-    return response.status(401).json({ message: "Error de token.", error: verificationError.details });
+    return response.status(401).json({
+      success: false,
+      must_logout: true,
+      message: "Error de token.",
+      error: verificationError.details,
+    });
   }
 
-  const user = await UserModel.findById(decoded.user.id)
+  const user = await UserModel.findById(decoded.user.id);
 
-  if (!user) return response.status(401).json({
-    message: "La sesión es inválida. Por favor, intenta iniciar sesión de nuevo.",
-    success: false,
-    error: [],
-  });
+  if (!user)
+    return response.status(401).json({
+      message:
+        "La sesión es inválida. Por favor, intenta iniciar sesión de nuevo.",
+      success: false,
+      must_logout: true,
+      error: [],
+    });
 
-  request.user = user
+  request.user = user;
   next();
 };
 
 module.exports = {
   validateLogin,
   validateRegister,
+  validateCheckToken,
   validateAuth,
 };

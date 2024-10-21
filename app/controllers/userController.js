@@ -30,7 +30,7 @@ const login = async (request, response) => {
   bcrypt.compare(request.body.password, user.password, (error, result) => {
     if (!result || error)
       return response.status(401).json({
-        status: 401,
+        success: false,
         message: "Contraseña incorrecta",
       });
 
@@ -107,7 +107,36 @@ const register = async (request, response) => {
   }
 };
 
+const checkToken = async (request, response) => {
+  try {
+    decoded = jwt.verify(request.body.access_token, secret);
+  } catch (verificationError) {
+    return response.status(401).json({
+      message: "Error de token.",
+      success: false,
+      must_logout: true,
+      error: verificationError.details,
+    });
+  }
+
+  const user = await UserModel.findById(decoded.user.id);
+
+  if (!user)
+    return response.status(401).json({
+      message:
+        "La sesión es inválida. Por favor, intenta iniciar sesión de nuevo.",
+      success: false,
+      must_logout: true,
+      error: [],
+    });
+
+  return response.json({
+    success: true,
+  });
+};
+
 module.exports = {
   login,
   register,
+  checkToken,
 };

@@ -1,13 +1,13 @@
 const mongoose = require("mongoose")
 
 const FeedbackSchema = new mongoose.Schema({
-    evaluation_id: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Evaluation",
-    },
     text: {
         type: String,
     },
+    score: {
+        type: Number,
+        enum: [1, 2, 3, 4, 5],
+    }
 }, 
 {
     timestamps: true,

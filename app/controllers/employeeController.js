@@ -1,5 +1,4 @@
 const Employee = require("../models/Employee")
-const flatted = require("flatted")
 
 const getEmployees = async (request, response) => {
     if (request.user.role == 3) return response.status(200).json({
