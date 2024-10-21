@@ -73,6 +73,7 @@ const register = async (request, response) => {
       last_name: request.body.last_name,
       email: request.body.email,
       age: request.body.age,
+      genre: request.body.genre,
       password: hashedPassword,
       role: request.body.role,
     });
